@@ -82,7 +82,6 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
 // Leaflet map
 let map = L.map('map').setView([36.75, 3.05], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19}).addTo(map);
-let pathLine = L.polyline([], {color:'#1aff8c'}).addTo(map);
 
 // الحالة
 function updateStat(id,value){document.getElementById(id).textContent=value;}
@@ -103,10 +102,10 @@ function applyRewards(rewards){
   }
 }
 
-// المهام المتسلسلة والمتنوعة مع مواقع واضحة
+// المهام
 const quests = [
-  {name:"اذهب إلى الحديقة", type:"location", lat:36.751, lon:3.055, radius:0.0005, desc:"الحديقة العامة بجانب المدرسة", exp:20, rewards:{HP:5}, unlocked:true},
-  {name:"استكشاف الساحة", type:"location", lat:36.752, lon:3.056, radius:0.0005, desc:"الساحة الرئيسية في المدينة", exp:30, rewards:{MP:10}, unlocked:false}
+  {name:"اذهب إلى الحديقة", type:"location", lat:36.750, lon:3.050, radius:0.002, desc:"الحديقة العامة", exp:20, rewards:{HP:5}, unlocked:true},
+  {name:"استكشاف الساحة", type:"location", lat:36.752, lon:3.052, radius:0.002, desc:"الساحة الرئيسية", exp:30, rewards:{MP:10}, unlocked:false}
 ];
 
 function renderQuests(){
@@ -115,7 +114,9 @@ function renderQuests(){
     if(!q.unlocked) return;
     const card=document.createElement("div"); card.className="card";
     if(q.type==="location"){
-      card.innerHTML=`<h3>${q.name}</h3><p>الوصف: ${q.desc}</p><p>نوع: موقع | EXP: ${q.exp}</p>
+      card.innerHTML=`<h3>${q.name}</h3>
+      <p>الوصف: ${q.desc}</p>
+      <p>نوع: موقع | EXP: ${q.exp}</p>
       <button id="completeBtn${i}" class="btn" disabled onclick="completeQuest(${i})">✅ إتمام المهمة</button>
       <button class="btn" onclick="startLocationTask(${i})">📍 ابدأ المهمة</button>`;
     }
@@ -123,27 +124,36 @@ function renderQuests(){
   });
 }
 
-// مهام الموقع
+// مهام الموقع مع Wi-Fi/GPS
 function startLocationTask(i){
   const q = quests[i];
   alert(`📍 انتقل إلى المكان: ${q.desc}`);
-  const targetMarker = L.marker([q.lat,q.lon],{title:q.name}).addTo(map);
+
+  // وضع Marker + دائرة على الخريطة
+  const targetMarker = L.marker([q.lat,q.lon]).addTo(map).bindPopup(q.name).openPopup();
+  const targetCircle = L.circle([q.lat,q.lon], {radius:50, color:"#1aff8c"}).addTo(map);
   map.setView([q.lat,q.lon],16);
 
-  const watchId = navigator.geolocation.watchPosition(pos=>{
-    const userLat=pos.coords.latitude;
-    const userLon=pos.coords.longitude;
-    const distance=Math.sqrt(Math.pow(userLat-q.lat,2)+Math.pow(userLon-q.lon,2));
-    if(distance<q.radius){
-      navigator.geolocation.clearWatch(watchId);
-      document.getElementById(`completeBtn${i}`).disabled=false;
-      alert("🎉 وصلت إلى المكان المطلوب! يمكنك الآن إتمام المهمة.");
-      L.circleMarker([q.lat,q.lon],{radius:6,color:"#1aff8c"}).addTo(map);
-    }
-  }, err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);});
+  // تتبع الموقع عبر GPS أو Wi-Fi
+  if(navigator.geolocation){
+    const watchId = navigator.geolocation.watchPosition(pos=>{
+      const userLat = pos.coords.latitude;
+      const userLon = pos.coords.longitude;
+      const distance = Math.sqrt(Math.pow(userLat-q.lat,2)+Math.pow(userLon-q.lon,2));
+      if(distance<q.radius){
+        navigator.geolocation.clearWatch(watchId);
+        document.getElementById(`completeBtn${i}`).disabled=false;
+        alert("🎉 وصلت إلى المكان المطلوب! يمكنك الآن إتمام المهمة.");
+      }
+    }, err=>{
+      alert("❌ لم أستطع الحصول على موقعك: "+err.message);
+    }, {enableHighAccuracy:false}); // يسمح بالاعتماد على Wi-Fi
+  } else {
+    alert("❌ المتصفح لا يدعم تحديد الموقع. جرب على الهاتف أو Wi-Fi.");
+  }
 }
 
-// إتمام المهمة وتفعيل التالية
+// إتمام المهمة
 function completeQuest(i){
   const q=quests[i]; applyRewards(q.rewards);
   alert(`🎉 تم إتمام المهمة "${q.name}"!`);
@@ -153,7 +163,7 @@ function completeQuest(i){
   if(i+1<quests.length){ quests[i+1].unlocked=true; renderQuests(); }
 }
 
-// تهيئة المهام
+// بدء المهام
 renderQuests();
 </script>
 </body>
