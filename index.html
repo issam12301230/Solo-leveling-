@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>نظام الصياد RPG واقعي</title>
+<title>نظام الصياد RPG ديناميكي</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -21,12 +21,12 @@ header{padding:16px;text-align:center;background:linear-gradient(90deg,#071,tran
 .card{background:#0f1511;border-radius:12px;padding:12px;flex:1;min-width:220px}
 .btn{background:#0a311b;color:var(--text);border-radius:10px;padding:8px 12px;cursor:pointer}
 .btn:disabled{opacity:.5;cursor:default}
-#map{height:360px;border-radius:12px;border:1px solid #124}
+#map{height:400px;border-radius:12px;border:1px solid #124;margin-bottom:10px}
 .footer{text-align:center;opacity:.7;font-size:12px;margin:12px 0}
 </style>
 </head>
 <body>
-<header><h1>📜 نظام الصياد RPG واقعي</h1></header>
+<header><h1>📜 نظام الصياد RPG ديناميكي</h1></header>
 <div class="container">
 
 <div class="tabs" role="tablist">
@@ -62,6 +62,7 @@ header{padding:16px;text-align:center;background:linear-gradient(90deg,#071,tran
 
 <section id="tab-map" class="panel" hidden>
   <div id="map"></div>
+  <button id="refreshLocationBtn" class="btn">🔄 تحديث الموقع</button>
 </section>
 
 <p class="footer">⚒ الموقع قيد التطوير – للاستفسار: 1x_x.issam.x_x5</p>
@@ -80,7 +81,7 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
 });
 
 // Leaflet map
-let map = L.map('map').setView([36.75, 3.05], 13);
+let map = L.map('map').setView([36.75, 5.83], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19}).addTo(map);
 
 // الحالة
@@ -102,33 +103,49 @@ function applyRewards(rewards){
   }
 }
 
-// المهام
-const quests = [
-  {name:"اذهب إلى الحديقة", type:"location", lat:36.750, lon:5.830, radius:0.0005, desc:"الحديقة العامة بسطيـف", exp:20, rewards:{HP:5}, unlocked:true},
-  {name:"استكشاف الساحة", type:"location", lat:36.752, lon:5.832, radius:0.0005, desc:"الساحة الرئيسية بسطيـف", exp:30, rewards:{MP:10}, unlocked:false}
-];
+// المهام ديناميكية حسب الموقع
+let quests = [];
 
+function generateCityQuest(lat, lon){
+  // مثال: لندن
+  if(lat>=51.5 && lat<=51.6 && lon>=-0.2 && lon<=0){
+    return {name:"اذهب إلى برج لندن", lat:51.508, lon:-0.075, desc:"برج لندن التاريخي", exp:30, rewards:{HP:5}};
+  }
+  // مثال: سطيف
+  if(lat>=36.75 && lat<=36.76 && lon>=5.83 && lon<=5.84){
+    return {name:"اذهب إلى الحديقة العامة بسطيـف", lat:36.750, lon:5.830, desc:"الحديقة العامة بسطيـف", exp:20, rewards:{MP:10}};
+  }
+  return null;
+}
+
+function loadDynamicQuest(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      let cityQuest = generateCityQuest(pos.coords.latitude,pos.coords.longitude);
+      if(cityQuest) quests=[cityQuest]; else quests=[];
+      renderQuests();
+    }, err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);},{enableHighAccuracy:true});
+  } else alert("❌ المتصفح لا يدعم GPS");
+}
+
+// عرض المهام
 function renderQuests(){
   const container=document.getElementById("questsList"); container.innerHTML="";
   quests.forEach((q,i)=>{
-    if(!q.unlocked) return;
     const card=document.createElement("div"); card.className="card";
-    if(q.type==="location"){
-      card.innerHTML=`<h3>${q.name}</h3>
+    card.innerHTML=`<h3>${q.name}</h3>
       <p>الوصف: ${q.desc}</p>
       <p>نوع: موقع | EXP: ${q.exp}</p>
       <button id="completeBtn${i}" class="btn" disabled onclick="completeQuest(${i})">✅ إتمام المهمة</button>
       <button class="btn" onclick="startLocationTask(${i})">📍 ابدأ المهمة</button>`;
-    }
     container.appendChild(card);
   });
 }
 
-// مهام الموقع مع GPS دقيق للهاتف
+// مهام الموقع مع GPS
 function startLocationTask(i){
   const q = quests[i];
   alert(`📍 انتقل إلى المكان: ${q.desc}`);
-
   const targetMarker = L.marker([q.lat,q.lon]).addTo(map).bindPopup(q.name).openPopup();
   let targetCircle = L.circle([q.lat,q.lon], {radius:20, color:"#1aff8c"}).addTo(map);
   map.setView([q.lat,q.lon],18);
@@ -138,21 +155,14 @@ function startLocationTask(i){
       let userLat = pos.coords.latitude;
       let userLon = pos.coords.longitude;
       let distance = Math.sqrt(Math.pow(userLat-q.lat,2)+Math.pow(userLon-q.lon,2));
-
-      // إذا كنت بعيداً عن الهدف، تكبر الدائرة لتسهيل الوصول
-      if(distance>q.radius*2) targetCircle.setRadius(50);
-
-      if(distance<q.radius){
+      if(distance>0.0005) targetCircle.setRadius(50);
+      if(distance<0.0005){
         navigator.geolocation.clearWatch(watchId);
         document.getElementById(`completeBtn${i}`).disabled=false;
         alert("🎉 وصلت إلى المكان المطلوب! يمكنك الآن إتمام المهمة.");
         targetCircle.setRadius(20);
       }
-    }, err=>{
-      alert("❌ لم أستطع الحصول على موقعك: "+err.message);
-    }, {enableHighAccuracy:true});
-  } else {
-    alert("❌ المتصفح لا يدعم GPS. استخدم الهاتف مع GPS أو Wi-Fi.");
+    }, err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);},{enableHighAccuracy:true});
   }
 }
 
@@ -163,10 +173,16 @@ function completeQuest(i){
   window.totalExp=(window.totalExp||0)+q.exp;
   let lvl=parseInt(document.getElementById("level").textContent);
   if(window.totalExp>=100){ lvl++; window.totalExp-=100; updateStat("level",lvl); alert(`🎉 ارتقيت إلى المستوى ${lvl}!`);}
-  if(i+1<quests.length){ quests[i+1].unlocked=true; renderQuests(); }
 }
 
-renderQuests();
+// زر تحديث الموقع
+document.getElementById("refreshLocationBtn").onclick = ()=>{
+  loadDynamicQuest();
+  alert("🔄 تم تحديث الموقع والمهام حسب موقعك الحالي.");
+}
+
+// تحميل المهمة عند بداية الصفحة
+loadDynamicQuest();
 </script>
 </body>
 </html>
