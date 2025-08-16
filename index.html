@@ -104,8 +104,8 @@ function applyRewards(rewards){
 
 // المهام
 const quests = [
-  {name:"اذهب إلى الحديقة", type:"location", lat:36.750, lon:3.050, radius:0.002, desc:"الحديقة العامة", exp:20, rewards:{HP:5}, unlocked:true},
-  {name:"استكشاف الساحة", type:"location", lat:36.752, lon:3.052, radius:0.002, desc:"الساحة الرئيسية", exp:30, rewards:{MP:10}, unlocked:false}
+  {name:"اذهب إلى الحديقة", type:"location", lat:36.750, lon:5.830, radius:0.0005, desc:"الحديقة العامة بسطيـف", exp:20, rewards:{HP:5}, unlocked:true},
+  {name:"استكشاف الساحة", type:"location", lat:36.752, lon:5.832, radius:0.0005, desc:"الساحة الرئيسية بسطيـف", exp:30, rewards:{MP:10}, unlocked:false}
 ];
 
 function renderQuests(){
@@ -124,14 +124,14 @@ function renderQuests(){
   });
 }
 
-// مهام الموقع مع Wi-Fi/GPS + تكبير الدائرة تلقائياً إذا بعيد
+// مهام الموقع مع GPS دقيق للهاتف
 function startLocationTask(i){
   const q = quests[i];
   alert(`📍 انتقل إلى المكان: ${q.desc}`);
 
   const targetMarker = L.marker([q.lat,q.lon]).addTo(map).bindPopup(q.name).openPopup();
-  let targetCircle = L.circle([q.lat,q.lon], {radius:50, color:"#1aff8c"}).addTo(map);
-  map.setView([q.lat,q.lon],16);
+  let targetCircle = L.circle([q.lat,q.lon], {radius:20, color:"#1aff8c"}).addTo(map);
+  map.setView([q.lat,q.lon],18);
 
   if(navigator.geolocation){
     const watchId = navigator.geolocation.watchPosition(pos=>{
@@ -139,20 +139,20 @@ function startLocationTask(i){
       let userLon = pos.coords.longitude;
       let distance = Math.sqrt(Math.pow(userLat-q.lat,2)+Math.pow(userLon-q.lon,2));
 
-      // إذا كان بعيد، نكبر الدائرة تلقائياً
-      if(distance>q.radius) targetCircle.setRadius(100);
+      // إذا كنت بعيداً عن الهدف، تكبر الدائرة لتسهيل الوصول
+      if(distance>q.radius*2) targetCircle.setRadius(50);
 
       if(distance<q.radius){
         navigator.geolocation.clearWatch(watchId);
         document.getElementById(`completeBtn${i}`).disabled=false;
         alert("🎉 وصلت إلى المكان المطلوب! يمكنك الآن إتمام المهمة.");
-        targetCircle.setRadius(50); // إعادة الحجم الطبيعي
+        targetCircle.setRadius(20);
       }
     }, err=>{
       alert("❌ لم أستطع الحصول على موقعك: "+err.message);
     }, {enableHighAccuracy:true});
   } else {
-    alert("❌ المتصفح لا يدعم تحديد الموقع. جرب على الهاتف مع GPS أو Wi-Fi.");
+    alert("❌ المتصفح لا يدعم GPS. استخدم الهاتف مع GPS أو Wi-Fi.");
   }
 }
 
