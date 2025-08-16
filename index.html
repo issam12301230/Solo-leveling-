@@ -1,0 +1,494 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<الرأس>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ظ†ط¸ط§ظ… ط§ظ„طµظٹظ'ط§ط¯ | أسلوب التسوية الفردية</title>
+
+<!-- Leaflet (ط®ط±ظٹط·ط© ط¨ظ„ط§ ظ…ظپطھط§ط) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  النزاهة="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" أصل متقاطع="مجهول">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+
+<النمط>
+  :جذر{
+    --bg:#000; --panel:#0b0f0c; --text:#9effa1; --muted:#6ddc76; --accent:#52ffa3; --danger:#ff4d4d; --card:#0f1511;
+  }
+  *{حجم الصندوق: صندوق الحدود}
+  الجسم{الهامش: 0؛ الخلفية: var(--bg)؛ اللون: var(--text)؛ عائلة الخطوط: system-ui، Segoe UI، Roboto، Tahoma، Arial}
+  الرأس{الحشو: 16 بكسل 12 بكسل؛ محاذاة النص: المركز؛ الخلفية: تدرج خطي (90 درجة، #071، شفاف، #071)؛ الموضع: ثابت؛ الأعلى: 0؛ الفهرس: 5}
+  h1{الهامش: 0؛ حجم الخط: 22 بكسل؛ المسافة بين الأحرف: 1 بكسل}
+  .الحاوية{الحشو: 12 بكسل؛ أقصى عرض: 980 بكسل؛ الهامش: تلقائي}
+  .tabs{عرض: شبكة؛ أعمدة قالب الشبكة: تكرار (5،1fr)؛ فجوة: 8 بكسل؛ هامش سفلي: 12 بكسل}
+  .tab-btn{الحشو: 10 بكسل؛ الحد: 1 بكسل صلب #104e2d؛ الخلفية: #08140e؛ اللون: var(--text)؛ نصف قطر الحد: 12 بكسل؛ المؤشر: المؤشر}
+  .tab-btn.active{outline:2px solid var(--accent);box-shadow:0 0 0 2px #0a2}
+  .panel{الخلفية:var(--panel);الحدود:1 بكسل صلبة #0a2a18;نصف قطر الحدود:14 بكسل;الحشو:12 بكسل;الهامش السفلي:12 بكسل}
+  .row{عرض: مرن؛فجوة: 10 بكسل؛لف مرن:لف}
+  .card{الخلفية:var(--card);الحدود:1 بكسل صلبة #103؛ لون الحدود:#143a26؛ نصف قطر الحدود:12 بكسل؛ الحشو:12 بكسل؛ المرونة:1؛ الحد الأدنى للعرض:220 بكسل}
+  .stat{عرض: مرن؛ ضبط المحتوى: مسافة بين؛ هامش: 4 بكسل 0}
+  .progress{العرض: 100%؛ الارتفاع: 10 بكسل؛ الخلفية: #051؛ نصف قطر الحدود: 999 بكسل؛ تجاوز السعة: مخفي}
+  .progress>span{display:block;height:100%;background:linear-gradient(90deg,#36f,#0f8);transition:width .3s}
+  .btn{الخلفية: #0a311b؛ اللون: var (--text)؛ الحد: 1 بكسل ثابت #165a35؛ نصف قطر الحد: 10 بكسل؛ الحشو: 8 بكسل 12 بكسل؛ المؤشر: المؤشر}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn.danger{الخلفية: #3b0d0d؛ لون الحدود: #6a1c1c}
+  .grid{عرض: شبكة؛ فجوة: 10 بكسل}
+  .grid-2{أعمدة قالب الشبكة: تكرار (ملائمة تلقائية، الحد الأدنى الأقصى (260 بكسل، 1 إطار))}
+  .قائمة{عرض:شبكة؛فجوة:10 بكسل}
+  .log{الحد الأقصى للارتفاع: 240 بكسل؛ تجاوز السعة: تلقائي؛ الخلفية: #03170e؛ الحد: 1 بكسل ثابت #0a2a18؛ نصف قطر الحد: 10 بكسل؛ الحشو: 8 بكسل؛ حجم الخط: 14 بكسل}
+  .log p{margin:6px 0}
+  .شارة{عرض: كتلة مضمنة؛ خلفية: #072b1a؛ حد: 1 بكسل ثابت #125b34؛ نصف قطر الحد: 999 بكسل؛ الحشو: 2 بكسل 8 بكسل؛ حجم الخط: 12 بكسل؛ بداية الهامش المضمن: 6 بكسل}
+  .kv{عرض: شبكة؛ أعمدة قالب الشبكة: 120 بكسل 1fr؛ فجوة: 6 بكسل؛ حجم الخط: 14 بكسل}
+  #خريطة{الارتفاع: 360 بكسل؛ نصف قطر الحدود: 12 بكسل؛ الحد: 1 بكسل صلب #124}
+  .كتم{اللون:#a8ffc0cc}
+  .dangerTxt{اللون:var(--danger);وزن الخط:700}
+  .footer{الشفافية: .7؛ حجم الخط: 12 بكسل؛ محاذاة النص: المركز؛ الهامش: 12 بكسل 0}
+</style>
+</head>
+<الجسم>
+  <header><h1>ًں“œ ظ†ط¸ط§ظ… ط§ظ„طμظٹظ'ط§ط¯ -- أسلوب التسوية الفردي</h1></header>
+  <div class="container">
+
+    <!-- ط £ظ„ط³ظ†ط© -->
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="status" role="tab" aria-selected="true">âڑ”ï¸ڈ ط§ظ„طط§ظ„ط©</button>
+      <button class="tab-btn" data-tab="quests" role="tab">ًںژ¯ ط§ظ„ظ…ظ‡ط§ظ…</button>
+      <button class="tab-btn" data-tab="inventory" role="tab">ًںژ' ط§ظ„ط¬ط±ط¯</button>
+      <button class="tab-btn" data-tab="log" role="tab">ًں“¢ ط§ظ„ظ†ط¸ط§ظ…</button>
+      <button class="tab-btn" data-tab="map" role="tab">ًں—؛ï¸ڈ ط§ظ„ط®ط±ظٹط·ط©</button>
+    </div>
+
+    <!-- ط§ظ„ط§ظ„ط© -->
+    <section id="tab-status" class="panel">
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>ط§ظ„ظ…ط³طھظˆظ‰ <span id="level">1</span> <span class="badge">XP: <span id="xp">0</span>/<span id="nextXp">100</span></span></h3>
+          <div class="progress" aria-label="طھظ‚ط¯ظ… ط§ظ„ط®ط¨ط±ط©"><span id="xpBar" style="width:0%"></span></div>
+          <div class="row" style="margin-top:10px">
+            <div class="card">
+              <div class="stat"><b>حصان</b><span id="hp">100</span></div>
+              <div class="stat"><b>MP</b><span id="mp">100</span></div>
+            </div>
+            <div class="card">
+              <div class="stat"><b>ATK</b><span id="atk">10</span></div>
+              <div class="stat"><b>DEF</b><span id="def">8</span></div>
+              <div class="stat"><b>AGI</b><span id="agi">9</span></div>
+              <div class="stat"><b>INT</b><span id="int">7</span></div>
+            </div>
+          </div>
+          <div class="stat"><b>ظ†ظ‚ط§ط· طھط·ظˆظٹط± ظ…طھط§طط©</b><span id="points">0</span></div>
+          <div class="row">
+            <button class="btn" data-alloc="atk">+ ATK</button>
+            <button class="btn" data-alloc="def">+ DEF</button>
+            <button class="btn" data-alloc="agi">+ AGI</button>
+            <button class="btn" data-alloc="int">+ INT</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>âڑ ï¸ڈ ظ…ط¤ط´ط± ط§ظ„ط®ط·ط±: <span id="dangerVal">0</span>%</h3>
+          <div class="progress"><span id="dangerBar" style="width:0%"></span></div>
+          <div class="kv" style="margin-top:10px">
+            <div>ط§ظ„ظˆظ‚طھ:</div><div id="now"></div>
+            <div>ط§ظ„ط³ط±ط¹ط©:</div><div><span id="speed">0.0</span> ظƒظ…/ط³</div>
+            <div>ط§ظ„ظ…ط³ط§ظپط©:</div><div><span id="distance">0</span></div>
+            <div>ط§ظ„ط¨ط·ط§ط±ظٹط©:</div><div><span id="battery">--</span>%</div>
+            <div>ط§ظ„ظ…ظˆظ‚ط¹:</div><div class="muted" id="lastPos">--</div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button id="trackBtn" class="btn">â–¶ï¸ڈ ط§ط¨ط¯ط£ ط§ظ„طھطھط¨ط¹</button>
+            <button id="resetBtn" class="btnanger">â™»ï¸ڈ طھطμظپظٹط± ط§ظ„ظ…ط³ط§ط±</button>
+          </div>
+          <p class="muted" style="margin-top:8px">ط¹ظ†ط¯ طھط¬ط§ظˆط² 70% ط³ظٹط¸ظ‡ط± طھظ†ط¨ظٹظ‡ ط®ط·ط± ط¨ط§ظ„ظ„ظˆظ† ط§ظ„ط £طظ…ط±.</p>
+        </div>
+      </div>
+    </القسم>
+
+    <!-- ط§ظ„ظ…ظ‡ط§ظ… -->
+    <section id="tab-quests" class="panel" hidden>
+      <div class="list" id="questsList"></div>
+      <div class="row">
+        <button id="addDaily" class="btn">â‍• ظ…ظ‡ظ…ط© ظٹظˆظ…ظٹط© (500ظ…)</button>
+        <button id="addSide" class="btn">â‍• ظ…ظ‡ظ…ط© ط¬ط§ظ†ط¨ظٹط© (2ظƒظ…)</button>
+      </div>
+    </القسم>
+
+    <!-- ط§ظ„ط¬ط±ط¯ -->
+    <section id="tab-inventory" class="panel" hidden>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>ط§ظ„ط¹ظ†ط§طµط±</h3>
+          <div class="list" id="items"></div>
+        </div>
+        <div class="card">
+          <h3>ط§ظ„ظ…ط¬ظ‡ظ'ط²</h3>
+          <p>ط³ظ„ط§ط: <span id="equippedWeapon">--</span></p>
+          <p>ظ…ط¬ظ…ظˆط¹ ATK ظ…ظ† ط§ظ„ط³ظ„ط§ط: <span id="atkBonus">0</span></p>
+        </div>
+      </div>
+    </القسم>
+
+    <!-- ط³ط¬ظ„ ط§ظ„ظ†ط¸ط§ظ… -->
+    <section id="tab-log" class="panel" hidden>
+      <div class="row">
+        <button id="exportBtn" class="btn">ًں“„ طھطµط¯ظٹط± ط§ظ„ط³ط¬ظ„</button>
+        <button id="clearLog" class="btn danger">ًں§¹ ظ…ط³ط ط§ظ„ط³ط¬ظ„</button>
+      </div>
+      <div id="log" class="log" aria-live="polite"></div>
+    </القسم>
+
+    <!-- ط§ظ„ط®ط±ظٹط·ط© -->
+    <section id="tab-map" class="panel" hidden>
+      <div id="map"></div>
+    </القسم>
+
+    <p class="footer">â“ک ظƒظ„ ط§ظ„ط¨ظٹط§ظ†ط§طھ طھظڈط®ط²ظ† ظ…طظ„ظٹظ‹ط§ ط¹ظ„ظ‰ ط¬ظ‡ط§ط²ظƒ (التخزين المحلي). ط¨ط§ظ„طھطھط¨ط¹: ظˆط§ظپظ‚ ط¹ظ„ظ‰ ط¥ط°ظ† ط§ظ„ظ…ظˆظ‚ط¹.</p>
+  </div>
+
+<النص>
+(وظيفة(){
+  // ============ ط £ط¯ظˆط§طھ ط¹ط§ظ…ط© ============
+  ثابت $ = (s، p=document) => p.querySelector(s)؛
+  ثابت $$ = (s، p=المستند) => [...p.querySelectorAll(s)];
+  ثابت المشبك = (n، الحد الأدنى، الحد الأقصى) => الحد الأدنى للرياضيات (الحد الأقصى للرياضيات (n، الحد الأدنى)، الحد الأقصى)؛
+  ثابت fmtMeters = (m)=> m<1000 ? `${Math.round(m)} ظ…` : `${(m/1000).toFixed(2)} ظƒظ…`;
+  ثابت هافرسين = (أ، ب) => {
+    ثابت toRad=d=>d*Math.PI/180، R=6371000؛
+    const dLat=toRad(b.lat-a.lat), dLon=toRad(b.lon-a.lon);
+    const lat1=toRad(a.lat), lat2=toRad(b.lat);
+    const h=Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+    العودة R*(2*Math.atan2(Math.sqrt(h)،Math.sqrt(1-h)));
+  };
+  دالة computeDanger({السرعة كيلومتر في الساعة، الساعة، إجمالي الأمتار، البطارية = 100}){
+    دع s=0؛
+    إذا (السرعة كيلومتر في الساعة>=1 وسرعة كيلومتر في الساعة <6) s+=8؛
+    وإلا إذا كانت (السرعة كيلومتر في الساعة <15) s+=16؛
+    وإلا إذا كانت (السرعة كيلومتر في الساعة <40) s+=24؛
+    وإلا إذا (السرعةKmh>=40) s+=14؛
+    إذا (الساعة>=22 || الساعة <5) s+=30؛ وإلا إذا (الساعة>=19) s+=12؛
+    إذا (إجمالي الأمتار> 3000) s+=8؛ إذا (إجمالي الأمتار> 8000) s+=12؛
+    إذا (البطارية <30) s+=10؛ إذا (البطارية <15) s+=18؛
+    إرجاع المشبك (s، 0، 100)؛
+  }
+  ثابت الآن = $("#الآن")، سرعة إل = $("#السرعة")، مسافة إل = $("#المسافة")،
+        BatEl=$("#البطارية"), posEl=$("#lastPos"),
+        xpEl=$("#xp")، nextXpEl=$("#nextXp")، xpBar=$("#xpBar")،
+        lvlEl=$("#level")، hpEl=$("#hp")، mpEl=$("#mp")،
+        atkEl=$("#atk"), defEl=$("#def"), agiEl=$("#agi"), intEl=$("#int"),
+        ptsEl=$("#نقاط")، قيمة الخطر=$("#قيمة الخطر")، شريط الخطر=$("#شريط الخطر")،
+        قائمة المهام = $("#قائمة المهام")، العناصرEl = $("#العناصر")،
+        السلاح المجهز=$("#السلاح المجهز")، مكافأة atkEl=$("#مكافأة atk")،
+        logEl=$("#log");
+
+  // ============ طط§ظ‹ط© ط§ظ‹ظ‹ط¹ط¨ط© (ظ…طظپظˆط¸ط©) ============
+  الحالة الثابتة = JSON.parse(localStorage.getItem("hunter_state")||"null") || {
+    المستوى: 1، الخبرة: 0، النقاط: 0، نقاط الصحة: 100، نقاط القوة: 100، الإحصائيات: {هجوم: 10، دفاع: 8، هجوم: 9، ذكاء: 7}،
+    الذهب: 0، البطارية: لا شيء،
+    المسار:[]، إجمالي الأمتار:0، السرعة:0، التتبع:خطأ،
+    جرد:[
+      {المعرف:1، الاسم:"ط³ظٹظپ ظپظˆظ„ط§ط°ظٹ"، النوع:"سلاح"، atk:5، مجهز:خطأ},
+      {id:2,name:"ط¬ط±ط¹ط© ط´ظپط§ط،",type:"potion",heal:30,count:2},
+      {id:3,name:"ط®ظ†ط¬ط± ط¸ظ„",type:"weapon",atk:9,equipped:false}
+    ],
+    المهام:[
+      {id:1,type:"daily",title:"ط§ط¨ط¯ط£ ط§ظ„طھطھط¨ط¹",desc:"ط§ظ‚ط·ط¹ 500 ظ…طھط±.",progress:0,goal:500,reward:{xp:60,gold:20},done:false},
+      {id:2,type:"side",title:"ط®ط·ظˆط§طھ ط§ظ„طµظٹط§ط¯",desc:"ط§ظ‚ط·ط¹ 2 ظƒظ….",progress:0,goal:2000,reward:{xp:120,gold:50},done:false}
+    ],
+    notifications:["ًں“œ طھظ… طھظ‡ظٹط¦ط© ط§ظ„ظ†ط¸ط§ظ….”]
+  };
+  Let watchId=null, Map, pathLine, lastMarker;
+
+  دالة الحفظ (){ localStorage.setItem("hunter_state",JSON.stringify(state)); }
+
+  // ============ ظˆط§ط¬ظ‡ط© ط§ظ‹ط £ظ‹ط³ظ†ط© ============
+  $$(".tab-btn").forEach(b=>{
+    ب.addEventListener("انقر فوق"،()=>{
+      $$(".tab-btn").forEach(x=>x.classList.remove("نشط"));
+      b.classList.add("نشط");
+      ثابت k=b.dataset.tab؛
+      $$('section[id^="tab-"]').forEach(s=>s.hidden=true);
+      $("#tab-"+k).مخفي=خطأ؛
+      إذا (k==="الخريطة") setTimeout(()=>الخريطة؟.invalidateSize()، 50)؛
+    });
+  });
+
+  // ============ ط¹ط±ط¶ ط§ظ„طط§ظ„ط© ============
+  دالة refreshStatus(){
+    lvlEl.textContent=state.level;
+    ثابت الحاجة = مستوى الحالة * 100 ؛ nextXpEl.textContent = الحاجة ؛
+    xpEl.textContent=state.xp; xpBar.style.width=((state.xp/need)*100)+"%";
+    hpEl.textContent=state.hp; mpEl.textContent=state.mp;
+    atkEl.textContent=state.stats.atk + getAtkBonus();
+    defEl.textContent=state.stats.def;
+    agiEl.textContent=state.stats.agi؛
+    intEl.textContent=state.stats.int؛
+    ptsEl.textContent=state.points;
+    ثابت د=خطر الحساب({
+      السرعة كيلومتر في الساعة:حالة السرعة كيلومتر في الساعة،
+      الساعة: تاريخ جديد().getHours()،
+      إجمالي الأمتار:state.totalMeters،
+      البطارية:state.battery??100
+    });
+    dangerVal.textContent=d;
+    شريط الخطر.style.width=d+"%";
+    dangerBar.style.background = d>=70 ? "linear-gradient(90deg,#f33,#f90)" : "linear-gradient(90deg,#36f,#0f8)";
+    speedEl.textContent=state.speedKmh.toFixed(1);
+    distEl.textContent=fmtMeters(state.totalMeters);
+    batEl.textContent=state.battery ?? "--";
+    posEl.textContent = state.path.length? `${state.path.at(-1).lat.toFixed(5)}, ${state.path.at(-1).lon.toFixed(5)}` : "--";
+  }
+
+  // طھظˆط²ظٹط¹ ط§ظ„ظ†ظ‚ط§ط·
+  $$(".btn[تخصيص البيانات]").لكل(btn=>{
+    btn.addEventListener("انقر",()=>{
+      إذا لم يكن (state.points) العودة؛
+      ثابت k=btn.dataset.alloc؛
+      state.stats[k]++; state.points--; notify(`ًں“ˆ +1 ${k.toUpperCase()}`);
+      حفظ(); تحديث الحالة();
+    });
+  });
+
+  // ============ ط§ظ„ظ…ظ‡ط§ظ… ============
+  دالة renderQuests(){
+    قائمة المهام.innerHTML="";
+    حالة.المهام.لكل(q=>{
+      مربع ثابت=document.createElement("div");
+      box.className="card";
+      النسبة المئوية الثابتة = (التقدم المطلوب / الهدف المطلوب) * 100؛
+      box.innerHTML=`
+        <h3>${q.title} ${q.done?'<span class="badge">ظ…ظ†ط¬ط²ط©</span>':''}</h3>
+        <p class="muted">${q.desc</p>
+        <div class="progress"><span style="width:${pct}%"></span></div>
+        <p>${Math.min(Math.floor(q.progress),q.goal)} / ${q.goal} â€¢ ظ…ظƒط§ظپط £ط©: XP ${q.reward.xp} + ط°ظ‡ط¨ ${q.reward.gold}</p>
+        <div class="row">
+          <button class="btn" data-claim="${q.id}" ${q.done?'':'disabled'}>ط§ط³طھظ„ط§ظ… ط§ظ„ظ…ظƒط§ظپط £ط©</button>
+          <button class="btn danger" data-abort="${q.id}">طط°ظپ</button>
+        </div>
+      `;
+      قائمة المهام.appendChild(الصندوق)؛
+    });
+    // ط £طط¯ط§ط« ط§ظ„ط £ط²ط±ط§ط±
+    $$("زر[ادعاء البيانات]").لكل(b=>b.onclick=()=>{
+      معرف ثابت = + b.dataset.claim؛
+      ثابت q=state.quests.find(z=>z.id===id);
+      إذا (q && q.done){
+        إضافةXp(q.reward.xp)؛ حالة الذهب + = q.reward.gold؛
+        notify(`ًںژ‰ طھظ… ط§ط³طھظ„ط§ظ… ظ…ظƒط§ظپط £ط© "${q.title}" (+${q.reward.xp} XP, +${q.reward.gold} ط°ظ‡ط¨)`);
+        // ط¥ط²ط§ظ„ط© ط§ظ„ظ…ظ‡ظ…ط© ط¨ط¹ط¯ ط§ظ„ظ…ظƒط§ظپط £ط©
+        حالة.المهام = حالة.المهام.تصفية(z=>z.id!==id);
+        حفظ(); تقديم المهام(); تحديث الحالة();
+      }
+    });
+    $$("زر[إلغاء البيانات]").لكل(b=>b.onclick=()=>{
+      معرف ثابت=+b.dataset.abort؛
+      حالة.المهام = حالة.المهام.تصفية(z=>z.id!==id);
+      notify("ًں—'ï¸ڈ طھظ… طط°ظپ ظ…ظ‡ظ…ط©.");
+      حفظ(); تقديم المهام();
+    });
+  }
+  $("#addDaily").onclick=()=>{
+    معرف ثابت = التاريخ.الآن();
+    state.quests.push({id,type:"daily",title:"ظ…ظ‡ظ…ط© ظٹظˆظ…ظٹط©,desc:"ط§ظ‚ط·ط¹ 500 ظ…طھط±.",progress:0,goal:500,reward:{xp:50,gold:15},done:false});
+    حفظ(); تقديم المهام();
+  };
+  $("#addSide").عند النقر=()=>{
+    معرف ثابت = التاريخ.الآن();
+    state.quests.push({id,type:"side",title:"ظ…ظ‡ظ…ط© ط¬ط§ظ†ط¨ظٹط©",desc:"ط§ظ‚ط·ط¹ 2 ظƒظ….",progress:0,goal:2000,reward:{xp:120,gold:40},done:false});
+    حفظ(); تقديم المهام();
+  };
+
+  دالة progressDistanceQuests(دلتا){
+    حالة.المهام.لكل(q=>{
+      إذا تم (q.done) العودة؛
+      q.progress = Math.min(q.progress + delta، q.goal)؛
+      إذا (q.progress>=q.goal && !q.done){
+        q.done=true; notify(`âœ… ط £ظ†ط¬ط²طھ ط§ظ„ظ…ظ‡ظ…ط©: ${q.title}`);
+      }
+    });
+  }
+
+  // ============ ط§ظ„ط¬ط±ط¯ ============
+  دالة getAtkBonus(){ إرجاع state.inventory.filter(i=>i.type==="weapon" && i.equipped).reduce((a,b)=>a+(b.atk||0),0); }
+  دالة renderInventory(){
+    العناصرEl.innerHTML="";
+    حالة المخزون لكل منها (it=>{
+      صف ثابت=document.createElement("div");
+      الصف.اسم الفئة="بطاقة";
+      دع المعلومات = it.type==="weapon" ? `ظ‚ظˆط© ط§ظ„ظ‡ط¬ظˆظ…: +${it.atk}` :
+                it.type===جرعة"؟ `ظٹط¹ظٹط¯ ${it.heal} HP ™ ظ…طھط¨ظ‚ظ'ظٹ: ${it.count??1}` : "";
+      إجراء ثابت = it.type==="weapon"
+        ؟ `<button class="btn" data-equip="${it.id}">${it.equipped?'ط¥ظ„ط؛ط§ط، ط§ظ„طھط¬ظ‡ظٹط²':'طھط¬ظ‡ظٹط²'}</button>`
+        : `<button class="btn" data-use="${it.id}" ${it.count? '':'disabled'}>ط§ط³طھط®ط¯ط§ظ…</button>`;
+      الصف.innerHTML=`<b>${اسمه}</b> <span class="badge">${نوعه}</span><p class="muted">${info}</p><div class="row">${action}`;
+      العناصرEl.appendChild(الصف);
+    });
+    السلاح المجهز.textContent = state.inventory.find(i=>i.type==="weapon" && i.equipped)?.name || "--";
+    atkBonusEl.textContent = getAtkBonus();
+
+    $$("زر[تجهيز البيانات]").لكل(b=>b.عند النقر=()=>{
+      معرف ثابت = + b.dataset.equip؛
+      ثابت it=state.inventory.find(x=>x.id===id);
+      إذا كان
+        // ط³ظ‹ط§ط ظˆط§طط¯ ظپظ‚ط· ظ…ط¬ظ‡ظ'ط²
+        حالة المخزون.تصفية (x => x.نوع ==="سلاح").لكل (x => x.مجهزة = خطأ)؛
+        it.equipped=true؛
+        notify(`ًں—،ï¸ڈ طھظ… طھط¬ظ‡ظٹط²: ${it.name}`);
+        حفظ(); تقديم المخزون(); تحديث الحالة();
+      }
+    });
+    $$("زر[استخدام البيانات]").لكل(b=>b.عند النقر=()=>{
+      معرف ثابت = + b.dataset.use؛
+      ثابت it=state.inventory.find(x=>x.id===id && x.type==="جرعة");
+      إذا (هو && (عدده؟؟1)>0){
+        state.hp = clamp(state.hp + it.heal, 0, 100);
+        عدد = (عدد ؟؟ 1) - 1؛
+        notify("ًںچ· ط§ط³طھط®ط¯ظ…طھ ط¬ط±ط¹ط© ط´ظپط§ط،»);
+        حفظ(); تقديم المخزون(); تحديث الحالة();
+      }
+    });
+  }
+
+  // ============ XP ظˆط§ظ„ظ…ط³طھظˆظ‰ ============
+  دالة addXp(v){
+    state.xp += v؛
+    بينما (state.xp >= state.level*100){
+      state.xp -= state.level*100؛
+      مستوى الحالة++؛
+      نقاط الحالة += 5؛
+      notify("â¬†ï¸ڈ ظ‹ظ‚ط¯ ط§ط±طھظپط¹ ظ…ط³طھظˆط§ظƒ! +5 ظ†ظ‚ط§ط· طھط·ظˆظٹط±”);
+    }
+    حفظ(); تحديث الحالة();
+  }
+
+  // ============ ط³ط¬ظ„ ط§ظ„ظ†ط¸ط§ظ… ============
+  وظيفة إعلام(رسالة){
+    ثابت t=تاريخ جديد();
+    حالة الإشعارات.إلغاء التحويل(`${t.toLocaleTimeString()} -- ${msg}`);
+    حالة الإشعارات = حالة الإشعارات.شريحة(0,200)؛
+    renderLog(); حفظ();
+    // طھطط°ظٹط± ط®ط·ط± ط¹ط§ظ„ظچ
+    const d=parseInt(dangerVal.textContent||"0",10);
+    إذا (d>=70 && !msg.includes("ط®ط·ط±")){
+      state.notifications.unshift(`${t.toLocaleTimeString()} -- âڑ ï¸ڈ ظ…ط³طھظˆظ‰ ط§ظ„ط®ط·ط± ظ…ط±طھظپط¹ (${d}%)`);
+      renderLog(); حفظ();
+    }
+  }
+  دالة renderLog(){
+    logEl.innerHTML = state.notifications.map(n=>`<p>${n}</p>`).join("");
+  }
+  $("#clearLog").onclick=()=>{ state.notifications=[]; renderLog(); save(); };
+  $("#exportBtn").عند النقر=()=>{
+    ثابت blob=new Blob([state.notifications.join("\n")],{النوع:"text/plain;charset=utf-8"});
+    ثابت a=document.createElement("a");
+    أ.href=URL.createObjectURL(blob); أ.download="system_log.txt"; أ.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  // ============ ط®ط±ظٹط·ط© ظˆGPS ============
+  دالة initMap(){
+    الخريطة = L.map('الخريطة'، {zoomControl: صحيح، attributionControl: خطأ}).setView([36.75، 3.05]، 13)؛
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      أقصى تكبير: 19
+    }).أضف إلى(الخريطة);
+    pathLine = L.polyline([], {اللون:'#1aff8c'}).addTo(الخريطة)؛
+    إذا (طول مسار الحالة) {
+      pathLine.setLatLngs(حالة مسار الخريطة(p=>[p.lat,p.lon]));
+      الخريطة. حدود ملائمة (مسار الخط. الحصول على حدود ()، {الحشو: [40،40]});
+      lastMarker = L.circleMarker(pathLine.getLatLngs().at(-1),{radius:6}).addTo(الخريطة)؛
+    }
+  }
+
+  دالة updateMap(lat,lon){
+    إذا لم يتم إرجاع الخريطة؛
+    ثابت خط العرض = [خط العرض، خط الطول]؛
+    pathLine.addLatLng(latlng);
+    if(lastMarker) lastMarker.remove();
+    العلامة الأخيرة = L.circleMarker(خط العرض، {نصف القطر: 6}).addTo(الخريطة)؛
+  }
+
+  دالة المسافة الكلية (){
+    دع د = 0؛
+    بالنسبة إلى (دعنا نقول i = 1؛ i < طول مسار الحالة؛ i++) {
+      د += هافيرسين (مسار الحالة [i-1]، مسار الحالة [i])؛
+    }
+    العودة د؛
+  }
+
+  دالة onPosition(pos){
+    ثابت {خط العرض، خط الطول، السرعة} = إحداثيات الموضع؛
+    ثابت p = {خط العرض:خط العرض، خط الطول:خط الطول، التاريخ:الآن()}؛
+    إذا (طول مسار الحالة) {
+      ثابت دلتا = haversine(state.path.at(-1)، ص)؛
+      state.totalMeters += دلتا؛
+      أسئلة مسافة التقدم(دلتا)؛
+    }
+    الحالة.المسار.ادفع(ص)؛
+    state.speedKmh = speed ? speed*3.6 : estimateSpeed();
+    تحديث الخريطة(p.lat,p.lon);
+    حفظ(); تحديث الحالة(); تقديم المهام();
+  }
+  دالة onError(err){
+    notify("â‌Œ ظپط´ظ„ طھطط¯ظٹط¯ ط§ظ„ظ…ظˆظ‚ط¹: "+err.message);
+  }
+
+  دالة تقدير السرعة (){
+    إذا (state.path.length<2) العودة 0؛
+    ثابت أ = مسار الحالة. في (-2)، ب = مسار الحالة. في (-1)؛
+    ثابت dt=(bt-at)/1000؛ إذا (dt <= 0) ارجع 0؛
+    ثابت م=هافيرسين(أ،ب)؛
+    العودة (م/د)*3.6؛
+  }
+
+  وظيفة تبديل التتبع (){
+    إذا لم يتم تتبع الحالة
+      if(!navigator.geolocation){ notify("ًںڑ« ط§ظ„ظ…طھطμظپط ظ„ط§ ظٹط¯ط¹ظ… طھطط¯ظٹط¯ ط§ظ„ظ…ظˆظ‚ط¹”); يعود؛ }
+      معرف الساعة = navigator.geolocation.watchPosition(onPosition، onError، {تمكين الدقة العالية: صحيح، الحد الأقصى للعمر: 0، المهلة: 15000});
+      state.tracking=true; $("#trackBtn").textContent="âڈ¹ï¸ڈ ط£ظˆظ‚ظپ ط§ظ„طھطھط¨ط¹"; notify("âœ… ط¨ط¯ط£ ط§ظ„طھطھط¨ط¹"); save();
+    }آخر{
+      إذا (معرف الساعة! = لا شيء) المستكشف.الموقع الجغرافي.مسح مراقبة (معرف الساعة)؛
+      State.tracking=false; $("#trackBtn").textContent="â–¶ï¸ڈ ط§ط¨ط¯ط £ ط§ظ„طھطھط¨ط¹"; notify("طھطھط¨ط¹"); يحفظ()؛
+    }
+  }
+
+  // ط £ط²ط±ط§ط± طھطھط¨ط¹/طھطμظپظٹط±
+  $("#trackBtn").onclick=toggleTracking؛
+  $("#resetBtn").عند النقر=()=>{
+    حالة.المسار=[]؛ حالة.إجمالي الأمتار=0؛ حالة.السرعةكيلومتر في الساعة=0؛
+    if(pathLine){ pathLine.setLatLngs([]); lastMarker?.remove(); lastMarker=null; }
+    notify("â™»ï¸ڈ طھظ… طھطμظپظٹط± ط§ظ„ظ…ط³ط§ط±"); يحفظ()؛ RefreshStatus();
+  };
+
+  // ============ ط¨ط·ط§ط±ظٹط© ============
+  إذا (navigator.getBattery){
+    المستكشف.احصل على البطارية().ثم(ب=>{
+      مجموعة ثابتة = () => { حالة البطارية = جولة الرياضيات (b.level * 100) ؛ batEl.textContent = حالة البطارية ؛ علامة الخطر () ؛ حفظ () ؛ } ؛
+      b.addEventListener("تغيير المستوى"، تعيين)؛
+    }).catch(()=>{});
+  }
+
+  // طھطط¯ظٹط« ط§ظ„ظˆظ‚طھ ظˆط§ظ„ط®ط·ط± ط§ظ„ط¯ظˆط±ظٹ
+  دالة dangerTick(){
+    حالة التحديث();
+  }
+  مجموعة الفاصل الزمني(()=>{
+    nowEl.textContent = new Date().toLocaleString();
+    علامة الخطر();
+  },1000);
+
+  // ============ طھظ‡ظٹط¦ط© ط§ظ„ظˆط§ط¬ظ‡ط© ============
+  تقديم المهام(); تقديم المخزون(); تقديم السجل(); تحديث الحالة();
+  initMap();
+
+  // ط§ط³طھط¹ط§ط¯ط© طھطھط¨ط¹ طھظ‹ظ‚ط§ط¦ظٹ ط¥ظ† ظƒط§ظ† ظ…ظپط¹ظ‹ط§ظ‹
+  if(state.tracking) $("#trackBtn").textContent="âڈ¹ï¸ڈ ط £ظˆظ‚ظپ ط§ظ„طھطھط¨ط¹";
+
+  // طھطط°ظٹط± ط¹ظ†ط¯ ط®ط·ط± ط¹ط§ظ„ظچ ظƒظ„ 20 ط«ط§ظ†ظٹط© ط¥ط°ط§ ط§ط³طھظ…ط±
+  مجموعة الفاصل الزمني(()=>{
+    const d=parseInt(dangerVal.textContent||"0",10);
+    if(d>=70) notify(`âڑ ï¸ڈ طھطط°ظٹط±: ط®ط·ط± ظ…ط±طھظپط¹ (${d}%)`);
+  },20000);
+
+})();
+</script>
+</body>
+</html>
