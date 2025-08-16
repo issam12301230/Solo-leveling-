@@ -1,214 +1,732 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>نظام الصياد RPG - المهام الواقعية</title>
-
-<!-- MapLibre GL JS -->
-<link href="https://unpkg.com/maplibre-gl@2.6.1/dist/maplibre-gl.css" rel="stylesheet" />
-<script src="https://unpkg.com/maplibre-gl@2.6.1/dist/maplibre-gl.js"></script>
-
-<style>
-:root {--bg:#000; --panel:#0b0f0c; --text:#9effa1; --accent:#52ffa3;}
-body{margin:0;font-family:system-ui,Segoe UI,Roboto,Tahoma,Arial;background:var(--bg);color:var(--text);}
-header{padding:16px;text-align:center;background:linear-gradient(90deg,#071,transparent,#071);position:fixed;top:0;width:100%;z-index:10;}
-.container{padding:100px 12px 12px;max-width:980px;margin:auto;}
-.tabs{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;}
-.tab-btn{flex:1;min-width:60px;padding:10px;border:1px solid #104e2d;background:#08140e;color:var(--text);border-radius:12px;cursor:pointer;white-space:nowrap;text-align:center;}
-.tab-btn.active{outline:2px solid var(--accent);}
-.panel{background:var(--panel);border-radius:14px;padding:12px;margin-bottom:12px;max-height:70vh;overflow-y:auto;}
-.row{display:flex;gap:10px;flex-wrap:wrap;}
-.card{background:#0f1511;border-radius:12px;padding:12px;flex:1;min-width:220px;}
-.btn{background:#0a311b;color:var(--text);border-radius:10px;padding:8px 12px;cursor:pointer;margin-top:6px;}
-.btn:disabled{opacity:.5;cursor:default;}
-#map{height:300px;border-radius:12px;margin-bottom:10px;}
-.footer{text-align:center;opacity:.7;font-size:12px;margin:12px 0;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أنمي بيكس - بحث صور شخصيات الأنمي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        :root {
+            --primary: #6a55fa;
+            --secondary: #ff6b8b;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #4CAF50;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding-bottom: 40px;
+            background-attachment: fixed;
+        }
+        
+        /* الشريط العلوي */
+        .navbar {
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(106, 85, 250, 0.3);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo i {
+            color: var(--primary);
+            font-size: 28px;
+        }
+        
+        .logo h1 {
+            font-size: 26px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 600;
+            padding: 8px 15px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* قسم البحث الرئيسي */
+        .hero {
+            padding: 80px 5% 50px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            color: #c4c4d4;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+        
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        .search-box {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 60px;
+            padding: 5px;
+            border: 2px solid rgba(106, 85, 250, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: 0;
+            outline: none;
+            padding: 20px 25px;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .search-box input::placeholder {
+            color: #a0a0c0;
+        }
+        
+        .search-box button {
+            background: linear-gradient(135deg, var(--primary), #8a7cff);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(106, 85, 250, 0.5);
+        }
+        
+        .search-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #d0d0e0;
+            border: 1px solid rgba(106, 85, 250, 0.3);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* قسم الشخصيات الشعبية */
+        .popular-section {
+            max-width: 1400px;
+            margin: 70px auto 40px;
+            padding: 0 5%;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title h3 {
+            font-size: 2.2rem;
+            color: white;
+        }
+        
+        .section-title i {
+            color: var(--secondary);
+            font-size: 28px;
+        }
+        
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+        
+        .character-card {
+            background: rgba(40, 40, 65, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(106, 85, 250, 0.2);
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .character-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(106, 85, 250, 0.3);
+        }
+        
+        .character-img {
+            height: 280px;
+            overflow: hidden;
+        }
+        
+        .character-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .character-card:hover .character-img img {
+            transform: scale(1.1);
+        }
+        
+        .character-info {
+            padding: 18px;
+        }
+        
+        .character-info h4 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: white;
+        }
+        
+        .character-info p {
+            color: #a0a0c0;
+            font-size: 0.95rem;
+        }
+        
+        .anime-name {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        /* القسم المميز */
+        .featured-section {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 0 5%;
+        }
+        
+        .featured-content {
+            background: linear-gradient(to right, rgba(40, 40, 65, 0.8), rgba(26, 26, 46, 0.8));
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(106, 85, 250, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .featured-text {
+            flex: 1;
+            padding: 50px;
+        }
+        
+        .featured-text h3 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .featured-text p {
+            font-size: 1.1rem;
+            color: #c4c4d4;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .featured-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(106, 85, 250, 0.2);
+        }
+        
+        .stat-box i {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .stat-box h4 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .stat-box p {
+            font-size: 1rem;
+            color: #a0a0c0;
+            margin: 0;
+        }
+        
+        .featured-image {
+            flex: 1;
+            height: 500px;
+            overflow: hidden;
+        }
+        
+        .featured-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* التذييل */
+        .footer {
+            max-width: 1200px;
+            margin: 60px auto 0;
+            padding: 40px 5% 20px;
+            border-top: 1px solid rgba(106, 85, 250, 0.3);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+        
+        .footer-column h4 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: white;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column ul li a {
+            color: #a0a0c0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            color: #6c757d;
+            font-size: 0.95rem;
+            border-top: 1px solid rgba(106, 85, 250, 0.2);
+            margin-top: 30px;
+        }
+        
+        /* التكيف مع الشاشات الصغيرة */
+        @media (max-width: 992px) {
+            .hero h2 {
+                font-size: 2.8rem;
+            }
+            
+            .featured-content {
+                flex-direction: column;
+            }
+            
+            .featured-text {
+                padding: 30px;
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .nav-links {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero {
+                padding: 60px 20px 30px;
+            }
+            
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .search-box {
+                flex-direction: column;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                gap: 15px;
+            }
+            
+            .search-box input {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 60px;
+                border: 2px solid rgba(106, 85, 250, 0.4);
+            }
+            
+            .search-box button {
+                width: 100%;
+            }
+            
+            .featured-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title h3 {
+                font-size: 1.8rem;
+            }
+            
+            .characters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-dragon"></i>
+            <h1>أنمي بيكس</h1>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">الرئيسية</a>
+            <a href="#">استكشاف</a>
+            <a href="#">الأكثر شعبية</a>
+            <a href="#">المفضلة</a>
+            <a href="#">حول</a>
+        </div>
+    </nav>
 
-<header><h1>🌍 نظام الصياد RPG - المهام الواقعية</h1></header>
-<div class="container">
+    <!-- قسم البطل -->
+    <section class="hero">
+        <h2>ابحث عن شخصيات الأنمي المفضلة لديك</h2>
+        <p>اكتشف آلاف الصور عالية الجودة لشخصيات الأنمي من جميع المسلسلات والأفلام. ابحث بالاسم أو المسلسل أو الصفات.</p>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" placeholder="اكتب اسم الشخصية (مثال: ناروتو، لوفي، نيزوكو...)">
+                <button><i class="fas fa-search"></i> بحث</button>
+            </div>
+            <div class="search-filters">
+                <div class="filter-btn active">الكل</div>
+                <div class="filter-btn">أبطال</div>
+                <div class="filter-btn">شخصيات نسائية</div>
+                <div class="filter-btn">شخصيات ذكورية</div>
+                <div class="filter-btn">أشرار</div>
+                <div class="filter-btn">أحدث الإضافات</div>
+            </div>
+        </div>
+        
+        <div class="search-tags">
+            <span>اقتراحات: </span>
+            <span class="tag">ناروتو أوزوماكي</span>
+            <span class="tag">مونكي دي لوفي</span>
+            <span class="tag">تانجيرو كامادو</span>
+            <span class="tag">إيرين ييغر</span>
+        </div>
+    </section>
 
-<div class="tabs" role="tablist">
-  <button class="tab-btn active" data-tab="status">⚔️ الحالة</button>
-  <button class="tab-btn" data-tab="quests">🎯 المهام</button>
-  <button class="tab-btn" data-tab="inventory">🎒 الجرد</button>
-  <button class="tab-btn" data-tab="log">📘 النظام</button>
-  <button class="tab-btn" data-tab="map">🗺️ الخريطة</button>
-</div>
+    <!-- الشخصيات الشعبية -->
+    <section class="popular-section">
+        <div class="section-title">
+            <i class="fas fa-fire"></i>
+            <h3>الشخصيات الأكثر شعبية</h3>
+        </div>
+        
+        <div class="characters-grid">
+            <!-- الشخصية 1 -->
+            <div class="character-card">
+                <div class="character-img">
+                    <img src="https://i.pinimg.com/564x/5f/19/7e/5f197e0f9c8a9c5f9f8b8d0a6d9e9a9e.jpg" alt="ناروتو">
+                </div>
+                <div class="character-info">
+                    <h4>ناروتو أوزوماكي</h4>
+                    <p><span class="anime-name">ناروتو شيبودن</span></p>
+                </div>
+            </div>
+            
+            <!-- الشخصية 2 -->
+            <div class="character-card">
+                <div class="character-img">
+                    <img src="https://i.pinimg.com/564x/4e/1c/90/4e1c90b6f3d0b7b0d0c8c7b0d3a3d3e3.jpg" alt="غون">
+                </div>
+                <div class="character-info">
+                    <h4>غون فريكس</h4>
+                    <p><span class="anime-name">هانتر x هانتر</span></p>
+                </div>
+            </div>
+            
+            <!-- الشخصية 3 -->
+            <div class="character-card">
+                <div class="character-img">
+                    <img src="https://i.pinimg.com/564x/0e/8e/3a/0e8e3a3d3d3d3d3d3d3d3d3d3d3d3d3d.jpg" alt="ميكاسا">
+                </div>
+                <div class="character-info">
+                    <h4>ميكاسا أكيرمان</h4>
+                    <p><span class="anime-name">هجوم العمالقة</span></p>
+                </div>
+            </div>
+            
+            <!-- الشخصية 4 -->
+            <div class="character-card">
+                <div class="character-img">
+                    <img src="https://i.pinimg.com/564x/5d/5a/8b/5d5a8b8b8b8b8b8b8b8b8b8b8b8b8b8b.jpg" alt="زينيتسو">
+                </div>
+                <div class="character-info">
+                    <h4>زينيتسو أغاتسوما</h4>
+                    <p><span class="anime-name">دييمون سلاير</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section id="tab-status" class="panel">
-  <div class="row">
-    <div class="card">
-      <h3>المستوى <span id="level">1</span></h3>
-      <p>HP: <span id="hp">100</span> | MP: <span id="mp">100</span></p>
-      <p>⚔️ ATK: <span id="atk">10</span> | 🛡️ DEF: <span id="def">5</span></p>
-    </div>
-  </div>
-</section>
+    <!-- قسم مميز -->
+    <section class="featured-section">
+        <div class="featured-content">
+            <div class="featured-text">
+                <h3>أكبر مجموعة صور لأنمي في العالم</h3>
+                <p>أنمي بيكس هو أكبر مصدر لصور شخصيات الأنمي عالية الجودة. مع أكثر من 500,000 صورة لأكثر من 20,000 شخصية من مختلف مسلسلات الأنمي الشهيرة. انضم لمجتمعنا المكون من أكثر من مليون محب للأنمي حول العالم.</p>
+                
+                <div class="featured-stats">
+                    <div class="stat-box">
+                        <i class="fas fa-images"></i>
+                        <h4>500K+</h4>
+                        <p>صورة عالية الجودة</p>
+                    </div>
+                    
+                    <div class="stat-box">
+                        <i class="fas fa-users"></i>
+                        <h4>20K+</h4>
+                        <p>شخصية مختلفة</p>
+                    </div>
+                    
+                    <div class="stat-box">
+                        <i class="fas fa-tv"></i>
+                        <h4>1K+</h4>
+                        <p>مسلسل أنمي</p>
+                    </div>
+                    
+                    <div class="stat-box">
+                        <i class="fas fa-globe"></i>
+                        <h4>1M+</h4>
+                        <p>مستخدم نشط</p>
+                    </div>
+                </div>
+            </div>
+            <div class="featured-image">
+                <img src="https://i.pinimg.com/564x/0c/8a/3d/0c8a3d3d3d3d3d3d3d3d3d3d3d3d3d3d.jpg" alt="مجموعة شخصيات أنمي">
+            </div>
+        </div>
+    </section>
 
-<section id="tab-quests" class="panel" hidden>
-  <div id="questsList" class="row"></div>
-</section>
+    <!-- التذييل -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>أنمي بيكس</h4>
+                <ul>
+                    <li><a href="#">حول الموقع</a></li>
+                    <li><a href="#">فريق العمل</a></li>
+                    <li><a href="#">اتصل بنا</a></li>
+                    <li><a href="#">الشروط والأحكام</a></li>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>المسلسلات</h4>
+                <ul>
+                    <li><a href="#">ناروتو شيبودن</a></li>
+                    <li><a href="#">ون بيس</a></li>
+                    <li><a href="#">هجوم العمالقة</a></li>
+                    <li><a href="#">بليتش</a></li>
+                    <li><a href="#">مصاصو الدماء</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>الشخصيات</h4>
+                <ul>
+                    <li><a href="#">الأكثر شعبية</a></li>
+                    <li><a href="#">شخصيات نسائية</a></li>
+                    <li><a href="#">شخصيات ذكورية</a></li>
+                    <li><a href="#">أحدث الإضافات</a></li>
+                    <li><a href="#">شخصيات الأشرار</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>تابعنا</h4>
+                <ul>
+                    <li><a href="#"><i class="fab fa-twitter"></i> تويتر</a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i> إنستغرام</a></li>
+                    <li><a href="#"><i class="fab fa-facebook"></i> فيسبوك</a></li>
+                    <li><a href="#"><i class="fab fa-discord"></i> ديسكورد</a></li>
+                    <li><a href="#"><i class="fab fa-youtube"></i> يوتيوب</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2023 أنمي بيكس. جميع الحقوق محفوظة. تم إنشاء الموقع لمحبي الأنمي حول العالم.
+        </div>
+    </footer>
 
-<section id="tab-inventory" class="panel" hidden>
-  <h3>الجرد:</h3>
-  <div id="inventoryItems"></div>
-</section>
-
-<section id="tab-log" class="panel" hidden>
-  <div id="log">🔔 لا توجد إشعارات بعد.</div>
-</section>
-
-<section id="tab-map" class="panel" hidden>
-  <div id="map"></div>
-  <button id="refreshLocationBtn" class="btn">🔄 تحديث الموقع</button>
-</section>
-
-<p class="footer">⚒ الموقع قيد التطوير – للاستفسار: 1x_x.issam.x_x5</p>
-</div>
-
-<script>
-// التبويبات
-document.querySelectorAll(".tab-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
-    btn.classList.add("active");
-    document.querySelectorAll("section[id^='tab-']").forEach(s=>s.hidden=true);
-    document.getElementById("tab-"+btn.dataset.tab).hidden=false;
-    if(btn.dataset.tab==="map"){ setTimeout(()=>map.resize(),200); }
-  });
-});
-
-// MapLibre
-let map = new maplibregl.Map({
-  container: 'map',
-  style: 'https://demotiles.maplibre.org/style.json',
-  center: [0,0],
-  zoom: 2
-});
-let userMarker=null;
-
-// الحالة
-function updateStat(id,value){document.getElementById(id).textContent=value;}
-function applyRewards(rewards){
-  let hp=parseInt(document.getElementById("hp").textContent);
-  let mp=parseInt(document.getElementById("mp").textContent);
-  let atk=parseInt(document.getElementById("atk").textContent);
-  let def=parseInt(document.getElementById("def").textContent);
-  if(rewards.HP) hp+=rewards.HP; if(rewards.MP) mp+=rewards.MP;
-  if(rewards.ATK) atk+=rewards.ATK; if(rewards.DEF) def+=rewards.DEF;
-  updateStat("hp",hp); updateStat("mp",mp);
-  updateStat("atk",atk); updateStat("def",def);
-  if(rewards.items){
-    const inv=document.getElementById("inventoryItems");
-    rewards.items.forEach(it=>{const p=document.createElement("p");p.textContent="📦 "+it;inv.appendChild(p);});
-  }
-}
-
-// المهام
-let quests=[];
-const globalTasks=[
-  {name:"جمع العناصر العشوائية",desc:"ابحث عن عناصر حولك",exp:5,rewards:{HP:2},requiresAction:true},
-  {name:"تمرين القتال",desc:"قم بتمارين القتال في موقعك",exp:10,rewards:{ATK:1},requiresAction:true}
-];
-
-function loadQuestsByCity(cityName){
-  let cityTasks=[];
-  if(cityName=="London"){
-    cityTasks.push({name:"اذهب إلى برج لندن",lat:51.508,lon:-0.075,desc:"برج لندن التاريخي",exp:30,rewards:{HP:5},requiresAction:true});
-  } else if(cityName=="Algiers"){
-    cityTasks.push({name:"قم بزيارة القصبة",lat:36.7538,lon:3.0588,desc:"القصبة بالعاصمة",exp:25,rewards:{MP:5},requiresAction:true});
-  }
-  quests=[...cityTasks,...globalTasks];
-  quests.forEach(q=>q.actionDone=false);
-  renderQuests();
-}
-
-function renderQuests(){
-  const container=document.getElementById("questsList"); container.innerHTML="";
-  quests.forEach((q,i)=>{
-    const card=document.createElement("div"); card.className="card";
-    card.innerHTML=`<h3>${q.name}</h3>
-      <p>${q.desc||''}</p>
-      <p>EXP: ${q.exp||0}</p>
-      <button id="actionBtn${i}" class="btn">${q.requiresAction ? "📍 ابدأ/نفّذ الفعل" : "✅ إتمام المهمة"}</button>
-      <button id="completeBtn${i}" class="btn" disabled>✅ إتمام المهمة</button>`;
-    container.appendChild(card);
-
-    document.getElementById(`actionBtn${i}`).onclick=()=>{ startLocationTask(i); }
-    document.getElementById(`completeBtn${i}`).onclick=()=>{ completeQuest(i); }
-  });
-}
-
-// GPS ومهام الموقع
-function startLocationTask(i){
-  const q=quests[i];
-  if(!q.lat || !q.lon){
-    q.actionDone=true;
-    document.getElementById(`completeBtn${i}`).disabled=false;
-    alert("يمكنك الآن إتمام المهمة.");
-    return;
-  }
-  map.flyTo({center:[q.lon,q.lat],zoom:15});
-  new maplibregl.Marker({color:'#1aff8c'}).setLngLat([q.lon,q.lat]).setPopup(new maplibregl.Popup().setText(q.name)).addTo(map);
-
-  if(navigator.geolocation){
-    const watchId=navigator.geolocation.watchPosition(pos=>{
-      const userLat=pos.coords.latitude,userLon=pos.coords.longitude;
-      if(userMarker) userMarker.remove();
-      userMarker=new maplibregl.Marker({color:'#ff0'}).setLngLat([userLon,userLat]).addTo(map);
-
-      const distanceThreshold = 0.0005;
-      if(Math.abs(userLat-q.lat)<distanceThreshold && Math.abs(userLon-q.lon)<distanceThreshold){
-        q.actionDone=true;
-        document.getElementById(`completeBtn${i}`).disabled=false;
-        alert("🎉 وصلت إلى المكان المطلوب! اضغط الآن على 'إتمام المهمة'.");
-        navigator.geolocation.clearWatch(watchId);
-      }
-    },err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);},{enableHighAccuracy:true});
-  }
-}
-
-function completeQuest(i){
-  const q=quests[i];
-  if(!q.actionDone){ alert("❌ يجب تنفيذ الفعل أو الوصول للموقع أولاً!"); return; }
-  applyRewards(q.rewards);
-  alert(`🎉 تم إتمام المهمة "${q.name}"!`);
-  window.totalExp=(window.totalExp||0)+q.exp;
-  let lvl=parseInt(document.getElementById("level").textContent);
-  if(window.totalExp>=100){ lvl++; window.totalExp-=100; updateStat("level",lvl); alert(`🎉 ارتقيت إلى المستوى ${lvl}!`);}
-}
-
-// تحديث الموقع
-document.getElementById("refreshLocationBtn").onclick=()=>{
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(pos=>{
-      reverseGeocode(pos.coords.latitude,pos.coords.longitude);
-      map.flyTo({center:[pos.coords.longitude,pos.coords.latitude],zoom:15});
-    },err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);},{enableHighAccuracy:true});
-  }
-}
-
-// تحويل الإحداثيات إلى مدينة باستخدام OpenStreetMap Nominatim API
-function reverseGeocode(lat,lon){
-  fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
-  .then(res=>res.json()).then(data=>{
-    const city=data.address.city||data.address.town||data.address.village||data.address.county||"Unknown";
-    loadQuestsByCity(city);
-  }).catch(err=>{ loadQuestsByCity("Unknown"); });
-}
-
-// تحميل أولي عند فتح الموقع
-if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(pos=>{
-    reverseGeocode(pos.coords.latitude,pos.coords.longitude);
-    map.flyTo({center:[pos.coords.longitude,pos.coords.latitude],zoom:15});
-  },err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);},{enableHighAccuracy:true});
-}
-</script>
-
+    <script>
+        // تفاعلات البحث والفلاتر
+        document.addEventListener('DOMContentLoaded', function() {
+            // زر البحث
+            const searchBtn = document.querySelector('.search-box button');
+            searchBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const searchTerm = document.querySelector('.search-box input').value;
+                if(searchTerm.trim() !== '') {
+                    alert(`جارٍ البحث عن: ${searchTerm}\nسيتم عرض النتائج في نسخة كاملة`);
+                }
+            });
+            
+            // الفلاتر
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // بطاقات الشخصيات
+            const characterCards = document.querySelectorAll('.character-card');
+            characterCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const charName = this.querySelector('h4').textContent;
+                    alert(`جارٍ عرض صور شخصية: ${charName}`);
+                });
+            });
+            
+            // تأثير الكتابة في عنوان البطل
+            const heroTitle = document.querySelector('.hero h2');
+            const originalText = heroTitle.textContent;
+            let charIndex = 0;
+            
+            function typeEffect() {
+                if(charIndex < originalText.length) {
+                    heroTitle.textContent = originalText.substring(0, charIndex + 1);
+                    charIndex++;
+                    setTimeout(typeEffect, 100);
+                } else {
+                    setTimeout(resetEffect, 3000);
+                }
+            }
+            
+            function resetEffect() {
+                charIndex = 0;
+                typeEffect();
+            }
+            
+            // بدء تأثير الكتابة
+            setTimeout(typeEffect, 1000);
+        });
+    </script>
 </body>
 </html>
