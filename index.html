@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>نظام الصياد RPG متقدم</title>
+<title>نظام الصياد RPG عالمي</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -24,7 +24,7 @@ header{padding:16px;text-align:center;background:linear-gradient(90deg,#071,tran
 </style>
 </head>
 <body>
-<header><h1>📜 نظام الصياد RPG متقدم</h1></header>
+<header><h1>🌍 نظام الصياد RPG عالمي</h1></header>
 <div class="container">
 
 <div class="tabs" role="tablist">
@@ -79,7 +79,7 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
 });
 
 // Leaflet map
-let map = L.map('map').setView([36.75, 5.83], 13);
+let map = L.map('map').setView([0,0],2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
 let userMarker, pathLine=L.polyline([],{color:'#1aff8c'}).addTo(map);
 
@@ -100,37 +100,43 @@ function applyRewards(rewards){
   }
 }
 
-// المهام لكل مدينة
+// المهام
 let quests=[];
-const cityTasks=[
-  {name:"اذهب إلى برج لندن",lat:51.508,lon:-0.075,desc:"برج لندن التاريخي",exp:30,rewards:{HP:5},city:{latMin:51.5,latMax:51.6,lonMin:-0.2,lonMax:0}},
-  {name:"اذهب إلى الحديقة العامة بسطيـف",lat:36.750,lon:5.830,desc:"الحديقة العامة بسطيـف",exp:20,rewards:{MP:10},city:{latMin:36.75,latMax:36.76,lonMin:5.83,lonMax:5.84}}
+const globalTasks=[
+  {name:"جمع العناصر العشوائية",desc:"ابحث عن عناصر حولك",exp:5,rewards:{HP:2}},
+  {name:"تمرين القتال",desc:"قم بتمارين القتال في موقعك",exp:10,rewards:{ATK:1}}
 ];
 
-function loadDynamicQuests(lat,lon){
-  quests=cityTasks.filter(q=>lat>=q.city.latMin && lat<=q.city.latMax && lon>=q.city.lonMin && lon<=q.city.lonMax);
+// محاكاة مهام حسب المدينة باستخدام مكتبة خارجية أو قاعدة بيانات
+function loadQuestsByCity(cityName){
+  let cityTasks=[];
+  if(cityName=="London"){
+    cityTasks.push({name:"اذهب إلى برج لندن",lat:51.508,lon:-0.075,desc:"برج لندن التاريخي",exp:30,rewards:{HP:5}});
+  } else if(cityName=="Algiers"){
+    cityTasks.push({name:"قم بزيارة القصبة",lat:36.7538,lon:3.0588,desc:"القصبة بالعاصمة",exp:25,rewards:{MP:5}});
+  }
+  quests=[...cityTasks,...globalTasks];
   renderQuests();
 }
 
-// عرض المهام
 function renderQuests(){
   const container=document.getElementById("questsList"); container.innerHTML="";
   quests.forEach((q,i)=>{
     const card=document.createElement("div"); card.className="card";
     card.innerHTML=`<h3>${q.name}</h3>
-      <p>الوصف: ${q.desc}</p>
-      <p>نوع: موقع | EXP: ${q.exp}</p>
+      <p>${q.desc||''}</p>
+      <p>EXP: ${q.exp||0}</p>
       <button id="completeBtn${i}" class="btn" disabled onclick="completeQuest(${i})">✅ إتمام المهمة</button>
       <button class="btn" onclick="startLocationTask(${i})">📍 ابدأ المهمة</button>`;
     container.appendChild(card);
   });
 }
 
-// GPS watch
+// GPS
 let watchId=null;
 function startLocationTask(i){
   const q=quests[i];
-  alert(`📍 انتقل إلى المكان: ${q.desc}`);
+  if(!q.lat || !q.lon){ alert("هذه مهمة عامة، يمكنك إتمامها فوراً."); document.getElementById(`completeBtn${i}`).disabled=false; return; }
   const targetMarker=L.marker([q.lat,q.lon]).addTo(map).bindPopup(q.name).openPopup();
   let targetCircle=L.circle([q.lat,q.lon],{radius:20,color:"#1aff8c"}).addTo(map);
   map.setView([q.lat,q.lon],18);
@@ -141,12 +147,10 @@ function startLocationTask(i){
       if(userMarker) map.removeLayer(userMarker);
       userMarker=L.circleMarker([userLat,userLon],{radius:6,color:'#ff0'}).addTo(map);
       pathLine.addLatLng([userLat,userLon]);
-      let distance=Math.sqrt(Math.pow(userLat-q.lat,2)+Math.pow(userLon-q.lon,2));
-      if(distance<0.0005){
+      if(Math.abs(userLat-q.lat)<0.001 && Math.abs(userLon-q.lon)<0.001){
         navigator.geolocation.clearWatch(watchId);
         document.getElementById(`completeBtn${i}`).disabled=false;
         alert("🎉 وصلت إلى المكان المطلوب! يمكنك الآن إتمام المهمة.");
-        targetCircle.setRadius(20);
       }
     },err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);},{enableHighAccuracy:true});
   }
@@ -161,21 +165,30 @@ function completeQuest(i){
   if(window.totalExp>=100){ lvl++; window.totalExp-=100; updateStat("level",lvl); alert(`🎉 ارتقيت إلى المستوى ${lvl}!`);}
 }
 
-// زر تحديث الموقع
+// تحديث الموقع
 document.getElementById("refreshLocationBtn").onclick=()=>{
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
-      loadDynamicQuests(pos.coords.latitude,pos.coords.longitude);
+      reverseGeocode(pos.coords.latitude,pos.coords.longitude);
       map.setView([pos.coords.latitude,pos.coords.longitude],15);
-      alert("🔄 تم تحديث الموقع والمهام حسب موقعك الحالي.");
     },err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);},{enableHighAccuracy:true});
   }
 }
 
-// بداية تحميل المهام حسب الموقع
+// تحويل الإحداثيات إلى مدينة باستخدام OpenStreetMap Nominatim API
+function reverseGeocode(lat,lon){
+  fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
+  .then(res=>res.json()).then(data=>{
+    const city=data.address.city||data.address.town||data.address.village||data.address.county||"Unknown";
+    console.log("City:",city);
+    loadQuestsByCity(city);
+  }).catch(err=>{ console.log(err); loadQuestsByCity("Unknown"); });
+}
+
+// تحميل أولي عند فتح الموقع
 if(navigator.geolocation){
   navigator.geolocation.getCurrentPosition(pos=>{
-    loadDynamicQuests(pos.coords.latitude,pos.coords.longitude);
+    reverseGeocode(pos.coords.latitude,pos.coords.longitude);
     map.setView([pos.coords.latitude,pos.coords.longitude],15);
   },err=>{alert("❌ لم أستطع الحصول على موقعك: "+err.message);},{enableHighAccuracy:true});
 }
